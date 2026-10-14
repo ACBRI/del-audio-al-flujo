@@ -302,7 +302,7 @@ repositorio y correr órdenes en su computador. Las reglas están en
 **¿Y en claude.ai, sin instalar nada?** Si su plan permite subir habilidades
 (Configuración, Capacidades), puede subir el ZIP del repositorio como habilidad.
 Claude dibuja en su propio entorno y le entrega el archivo HTML para descargar. Este
-camino depende del plan y no lo he probado en todos.
+camino depende del plan y todavía no está probado; si no funciona, use Claude Code.
 
 **¿Claude puede recordar la herramienta para la próxima vez?** Sí: pídale que
 instale esta carpeta como habilidad personal de Claude Code. Desde entonces basta
