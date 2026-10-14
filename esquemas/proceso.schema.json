@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ACBRI/del-audio-al-flujo/esquemas/proceso.schema.json",
+  "title": "Proceso narrado",
+  "description": "Modelo intermedio entre el relato de un proceso y su dibujo. Lo escribe la IA siguiendo prompts/proceso.md; dibujar.py lo convierte en un flujo por carriles. Cada paso lleva la frase del relato que lo respalda.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "idioma",
+    "titulo",
+    "objetivo",
+    "carriles",
+    "fases",
+    "pasos",
+    "conexiones",
+    "observaciones",
+    "preguntas_abiertas"
+  ],
+  "properties": {
+    "version": {
+      "description": "Versión de este esquema.",
+      "const": 1
+    },
+    "idioma": {
+      "description": "Idioma del relato y del dibujo.",
+      "enum": ["es", "en"]
+    },
+    "titulo": {
+      "description": "Nombre corto del proceso, como lo diría la persona: «Del pedido al despacho».",
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 70
+    },
+    "objetivo": {
+      "description": "Para qué existe el proceso, en una frase. null si el relato no lo dice.",
+      "type": ["string", "null"],
+      "minLength": 3,
+      "maxLength": 160
+    },
+    "carriles": {
+      "description": "Quién hace cada cosa: roles o áreas que el relato nombra, en el orden en que aparecen.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/carril" }
+    },
+    "fases": {
+      "description": "Etapas grandes del proceso, en orden. Puede quedar vacío.",
+      "type": "array",
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/fase" }
+    },
+    "pasos": {
+      "description": "Los pasos en el orden en que ocurren.",
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 40,
+      "items": { "$ref": "#/$defs/paso" }
+    },
+    "conexiones": {
+      "description": "Qué paso sigue a cuál. Las que salen de una decisión llevan su respuesta como etiqueta.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": { "$ref": "#/$defs/conexion" }
+    },
+    "observaciones": {
+      "description": "Dónde se pierde tiempo, qué riesgos hay y otras notas que el relato menciona.",
+      "type": "array",
+      "maxItems": 15,
+      "items": { "$ref": "#/$defs/observacion" }
+    },
+    "preguntas_abiertas": {
+      "description": "Lo que el relato no dice y hace falta para completar el flujo.",
+      "type": "array",
+      "maxItems": 10,
+      "items": { "type": "string", "minLength": 3, "maxLength": 200 }
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "Identificador en minúsculas, sin espacios ni tildes: letras, números y guion bajo.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,39}$"
+    },
+    "carril": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "externo"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": {
+          "description": "Rol o área: «Ventas», «Bodega», «Cliente».",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 36
+        },
+        "externo": {
+          "description": "true si es alguien de fuera de la empresa: cliente, proveedor, banco, transportista.",
+          "type": "boolean"
+        }
+      }
+    },
+    "fase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "nombre": {
+          "description": "Uno o dos verbos: «Pedir», «Aprobar», «Despachar».",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24
+        }
+      }
+    },
+    "paso": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tipo", "titulo", "detalle", "carril", "fase", "herramienta", "dolor", "cita"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "tipo": {
+          "description": "inicio: lo que dispara el proceso. tarea: trabajo de una persona fuera de un sistema. sistema: trabajo hecho dentro de un sistema (ERP, programa contable, portal). decision: una pregunta con dos o más salidas. fin: donde termina.",
+          "enum": ["inicio", "tarea", "decision", "sistema", "fin"]
+        },
+        "titulo": {
+          "description": "Verbo y objeto, corto: «Envía el pedido». En una decisión, la pregunta: «¿Tiene cupo?».",
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 32
+        },
+        "detalle": {
+          "description": "Complemento corto que se lee bajo el título: «por WhatsApp». null si no hace falta.",
+          "type": ["string", "null"],
+          "minLength": 2,
+          "maxLength": 36
+        },
+        "carril": { "$ref": "#/$defs/id" },
+        "fase": {
+          "description": "id de la fase, o null si el proceso no tiene fases.",
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9_]{0,39}$"
+        },
+        "herramienta": {
+          "description": "Con qué se hace: «WhatsApp», «hoja de cálculo», «papel». null si el relato no lo dice.",
+          "type": ["string", "null"],
+          "minLength": 2,
+          "maxLength": 32
+        },
+        "dolor": {
+          "description": "Lo que la persona dijo que molesta, demora o falla en este paso, en sus palabras. null si no lo dijo.",
+          "type": ["string", "null"],
+          "minLength": 2,
+          "maxLength": 32
+        },
+        "cita": {
+          "description": "La frase del relato, copiada tal cual, que respalda este paso.",
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 400
+        }
+      }
+    },
+    "conexion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["desde", "hacia", "etiqueta"],
+      "properties": {
+        "desde": { "$ref": "#/$defs/id" },
+        "hacia": { "$ref": "#/$defs/id" },
+        "etiqueta": {
+          "description": "Obligatoria si sale de una decisión («Sí», «No»). En las demás, null o una palabra que agregue algo: «por correo».",
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 24
+        }
+      }
+    },
+    "observacion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tipo", "texto", "cita"],
+      "properties": {
+        "tipo": {
+          "description": "tiempo: dónde se pierde tiempo. riesgo: qué puede salir mal. otra: cualquier otra nota.",
+          "enum": ["tiempo", "riesgo", "otra"]
+        },
+        "texto": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 140
+        },
+        "cita": {
+          "description": "La frase del relato que la respalda, o null si es una conclusión de varias frases.",
+          "type": ["string", "null"],
+          "minLength": 3,
+          "maxLength": 400
+        }
+      }
+    }
+  }
+}
