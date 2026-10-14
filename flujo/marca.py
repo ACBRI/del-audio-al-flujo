@@ -158,7 +158,10 @@ ESTILOS = """
   font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; letter-spacing: -.01em; }
 /* Cada regla del dibujo va dos veces: con :root gana en la página; sin él se
    aplica también en el SVG exportado, donde la raíz es el propio <svg>. */
-:root svg text, svg text { font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; }
+:root svg text, svg text { font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  /* Con el dibujo reducido (un teléfono, el mapa), el navegador redondea el ancho
+     de cada letra hacia arriba y el texto se sale de su caja. Así escala parejo. */
+  text-rendering: geometricPrecision; }
 /* El nombre de cada paso es un titular: Archivo. Es más angosta que la letra
    monoespaciada con que Archify mide, así que siempre cabe con aire. */
 :root svg text[data-node-label], svg text[data-node-label] {
@@ -213,6 +216,9 @@ ESTILOS = """
   .ab-citas li { grid-template-columns: 2.2rem 1fr; }
   .ab-citas q { grid-column: 2; }
 }
+/* Los navegadores de teléfono agrandan solos el texto que juzgan pequeño; en el
+   dibujo eso saca los subtítulos de sus cajas. Aquí el tamaño lo decide el dibujo. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* En el teléfono la barra del visor no cabe en una línea: se queda con el tema
    y la exportación, y puede bajar a una segunda línea. */
 @media (max-width: 600px) {
