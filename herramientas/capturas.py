@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """Prueba de punta a punta con capturas, para quien mantiene la herramienta.
 
-Dibuja el ejemplo (ejemplos/pedido-a-despacho) con dibujar.py, lo fotografía con
-un Chromium sin ventana (escritorio claro, escritorio oscuro, página completa y
-teléfono) y, por último, pulsa «Exportar» en el visor para guardar la imagen PNG
-tal como la descargaría una persona (herramientas/exportar.mjs). Las imágenes van
-a docs/capturas/ y son las que muestra el README.
+Dibuja el ejemplo (ejemplos/pedido-a-despacho) con dibujar.py y lo abre en un
+Chromium sin ventana (herramientas/navegador.mjs): lo fotografía en escritorio
+claro, escritorio oscuro, página completa y teléfono, y pulsa «Exportar» para
+guardar la imagen PNG tal como la descargaría una persona. Las imágenes van a
+docs/capturas/ y son las que muestra el README.
 
     python herramientas/capturas.py [--chrome RUTA] [--salida CARPETA]
 
@@ -27,18 +27,12 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 
+from flujo.archify import buscar_node  # noqa: E402
 from flujo.cli import main as dibujar  # noqa: E402
 
 EJEMPLO = RAIZ / "ejemplos" / "pedido-a-despacho" / "proceso.json"
 CAPTURAS = RAIZ / "docs" / "capturas"
-
-# nombre, ancho, alto, escala, tema oscuro
-TOMAS = (
-    ("escritorio", 1440, 900, 1, False),
-    ("escritorio-oscuro", 1440, 900, 1, True),
-    ("escritorio-completo", 1440, 1400, 1, False),
-    ("telefono", 390, 844, 2, False),
-)
+TOMAS = ("escritorio", "escritorio-oscuro", "escritorio-completo", "telefono")
 
 
 def buscar_chrome(propio: str | None) -> Path | None:
@@ -53,18 +47,37 @@ def buscar_chrome(propio: str | None) -> Path | None:
     return None
 
 
-def fotografiar(chrome: Path, html: Path, destino: Path, ancho: int, alto: int, escala: int, oscuro: bool) -> None:
-    with tempfile.TemporaryDirectory() as perfil:
-        orden = [str(chrome), "--no-sandbox", "--disable-gpu", "--hide-scrollbars",
-                 "--user-data-dir=%s" % perfil, "--window-size=%d,%d" % (ancho, alto),
-                 "--force-device-scale-factor=%d" % escala, "--virtual-time-budget=6000",
-                 "--screenshot=%s" % destino]
-        if oscuro:
-            orden.append("--blink-settings=preferredColorScheme=0")
-        orden.append(html.resolve().as_uri())
-        subprocess.run(orden, capture_output=True, timeout=120, check=False)
-    if not destino.is_file():
-        raise SystemExit("El navegador no produjo %s." % destino)
+def capturar(chrome: Path, carpeta: Path) -> int:
+    codigo = dibujar([str(EJEMPLO), "--salida", str(carpeta), "--no-abrir"])
+    if codigo != 0:
+        return codigo
+    node, motivo = buscar_node()
+    if not node:
+        print(motivo)
+        return 2
+    fotos = carpeta / "fotos"
+    r = subprocess.run([str(node), str(RAIZ / "herramientas" / "navegador.mjs"), str(chrome),
+                        str(carpeta / "flujo.html"), str(fotos)],
+                       capture_output=True, text=True, encoding="utf-8", timeout=300)
+    print(r.stdout.strip())
+    exportada = sorted((fotos / "descargas").glob("*.png"))
+    if r.returncode != 0 or not exportada or not list((fotos / "descargas").glob("*.svg")):
+        print("Las capturas o la exportación desde el visor fallaron.")
+        print(r.stderr.strip()[-2000:])
+        return 1
+    CAPTURAS.mkdir(parents=True, exist_ok=True)
+    for nombre in TOMAS:
+        shutil.copy(fotos / ("%s.png" % nombre), CAPTURAS / ("%s.png" % nombre))
+        print("Captura: docs/capturas/%s.png" % nombre)
+    destino = CAPTURAS / "imagen-exportada.png"
+    try:  # la exportación sale a 4x; para el README basta la mitad
+        from PIL import Image
+        with Image.open(exportada[0]) as imagen:
+            imagen.resize((imagen.width // 2, imagen.height // 2), Image.LANCZOS).save(destino, optimize=True)
+    except ImportError:
+        shutil.copy(exportada[0], destino)
+    print("Captura: docs/capturas/%s" % destino.name)
+    return 0
 
 
 def main() -> int:
@@ -77,45 +90,9 @@ def main() -> int:
         print("No encontré un Chromium sin ventana. Indique uno con --chrome.")
         return 2
     if args.salida:
-        return capturar(chrome, Path(args.salida))
+        return capturar(chrome, Path(args.salida).resolve())
     with tempfile.TemporaryDirectory(prefix="flujo-") as carpeta:
         return capturar(chrome, Path(carpeta))
-
-
-def capturar(chrome: Path, carpeta: Path) -> int:
-    codigo = dibujar([str(EJEMPLO), "--salida", str(carpeta), "--no-abrir"])
-    if codigo != 0:
-        return codigo
-    CAPTURAS.mkdir(parents=True, exist_ok=True)
-    for nombre, ancho, alto, escala, oscuro in TOMAS:
-        destino = CAPTURAS / ("%s.png" % nombre)
-        fotografiar(chrome, carpeta / "flujo.html", destino, ancho, alto, escala, oscuro)
-        print("Captura: %s" % destino.relative_to(RAIZ))
-    return exportar(chrome, carpeta)
-
-
-def exportar(chrome: Path, carpeta: Path) -> int:
-    """Pulsa «Exportar» en el visor y guarda la imagen PNG que descarga una persona."""
-    from flujo.archify import buscar_node
-    node, _ = buscar_node()
-    descargas = carpeta / "descargas"
-    r = subprocess.run([str(node), str(RAIZ / "herramientas" / "exportar.mjs"), str(chrome),
-                        str(carpeta / "flujo.html"), str(descargas)],
-                       capture_output=True, text=True, encoding="utf-8", timeout=180)
-    print(r.stdout.strip())
-    imagenes = sorted(descargas.glob("*.png"))
-    if r.returncode != 0 or not imagenes or not list(descargas.glob("*.svg")):
-        print("La exportación desde el visor falló.")
-        return 1
-    destino = CAPTURAS / "imagen-exportada.png"
-    try:  # la exportación sale a 4x; para el README basta la mitad
-        from PIL import Image
-        with Image.open(imagenes[0]) as imagen:
-            imagen.resize((imagen.width // 2, imagen.height // 2), Image.LANCZOS).save(destino, optimize=True)
-    except ImportError:
-        shutil.copy(imagenes[0], destino)
-    print("Captura: %s" % destino.relative_to(RAIZ))
-    return 0
 
 
 if __name__ == "__main__":
