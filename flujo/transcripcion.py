@@ -137,8 +137,8 @@ def main(argv=None) -> int:
     destino = _destino_libre(destino)
 
     print("Transcribiendo %s con el modelo «%s» en el procesador." % (audio.name, args.modelo))
-    print("Si es la primera vez, antes se descarga el modelo (unos 500 MB). Un audio de diez minutos "
-          "suele tardar entre cinco y quince minutos, según el computador.")
+    print("Si es la primera vez, antes se descarga el modelo (unos 500 MB). Después, un audio de diez "
+          "minutos tarda unos minutos; cuántos depende del computador.")
 
     def avance(van, total):
         if total:
