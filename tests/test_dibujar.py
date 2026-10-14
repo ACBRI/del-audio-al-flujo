@@ -64,6 +64,14 @@ def test_ejemplo_de_punta_a_punta(node, carpeta, capsys):
     assert html.index('class="ab-anexo"') > html.index('<div class="cards">')
 
 
+def test_ruta_relativa_desde_otra_carpeta(node, carpeta, capsys, monkeypatch):
+    """Así lo corre una persona: desde la carpeta del repositorio, con una ruta relativa."""
+    monkeypatch.chdir(carpeta.parent)
+    codigo, salida = _correr(capsys, "%s/proceso.json" % carpeta.name, "--no-abrir")
+    assert codigo == 0, salida
+    assert (carpeta / "flujo.html").is_file()
+
+
 def test_salida_en_json_para_agentes(node, carpeta, capsys):
     codigo, salida = _correr(capsys, carpeta / "proceso.json", "--no-abrir", "--json")
     assert codigo == 0

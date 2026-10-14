@@ -125,8 +125,10 @@ def version_archify() -> str:
 
 
 def _correr(node: Path, argumentos: list) -> dict:
+    # Archify corre desde su propia carpeta: toda ruta tiene que ir absoluta.
+    argumentos = [str(Path(a).resolve()) if isinstance(a, Path) else str(a) for a in argumentos]
     try:
-        r = subprocess.run([str(node), str(CLI)] + [str(a) for a in argumentos], cwd=str(ARCHIFY),
+        r = subprocess.run([str(node), str(CLI)] + argumentos, cwd=str(ARCHIFY),
                            capture_output=True, text=True, encoding="utf-8", errors="replace",
                            timeout=ESPERA)
     except subprocess.TimeoutExpired:

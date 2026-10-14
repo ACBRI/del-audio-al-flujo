@@ -126,7 +126,7 @@ def main(argv=None) -> int:
         parser.print_help()
         return 1
     como_json = args.json  # con --json solo se imprime el informe final
-    ruta = Path(args.proceso).expanduser()
+    ruta = Path(args.proceso).expanduser().resolve()
     datos, errores = modelo.leer(ruta)
     if not errores:
         errores, avisos = modelo.revisar(datos)
@@ -158,7 +158,7 @@ def main(argv=None) -> int:
     partes = resultado["partes"]
     total = len(partes)
     nombres = ["flujo"] if total == 1 else ["flujo-parte-%d" % p["numero"] for p in partes]
-    carpeta = Path(args.salida).expanduser() if args.salida else ruta.parent
+    carpeta = Path(args.salida).expanduser().resolve() if args.salida else ruta.parent
     carpeta.mkdir(parents=True, exist_ok=True)
     por_id = {p["id"]: p for p in datos["pasos"]}
 
