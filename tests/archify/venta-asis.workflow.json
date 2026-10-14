@@ -1,0 +1,187 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Venta a cobro · cómo se hace hoy",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "all",
+      "entries": {
+        "frontend": {
+          "label": "Fuera del sistema"
+        },
+        "security": {
+          "label": "Aquí se pierde tiempo"
+        },
+        "external": {
+          "label": "Quien espera el resultado"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "cliente",
+      "label": "Cliente"
+    },
+    {
+      "id": "vendedor",
+      "label": "Vendedor"
+    },
+    {
+      "id": "bodega",
+      "label": "Bodega"
+    },
+    {
+      "id": "facturacion",
+      "label": "Facturación"
+    },
+    {
+      "id": "cartera",
+      "label": "Cartera"
+    }
+  ],
+  "phases": [
+    {
+      "id": "pedir",
+      "label": "Pedir",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "despachar",
+      "label": "Despachar",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "cobrar",
+      "label": "Cobrar",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "pide",
+      "lane": "cliente",
+      "col": 0,
+      "type": "frontend",
+      "label": "Pide por WhatsApp",
+      "sublabel": "o por llamada",
+      "width": 136
+    },
+    {
+      "id": "anota",
+      "lane": "vendedor",
+      "col": 1,
+      "type": "security",
+      "label": "Anota el pedido",
+      "sublabel": "y pide el cupo",
+      "tag": "hoja de cálculo",
+      "width": 122
+    },
+    {
+      "id": "cupo",
+      "lane": "cartera",
+      "col": 2,
+      "type": "security",
+      "label": "Responde el cupo",
+      "sublabel": "horas después",
+      "tag": "el pedido espera",
+      "width": 129
+    },
+    {
+      "id": "prepara",
+      "lane": "bodega",
+      "col": 3,
+      "type": "frontend",
+      "label": "Prepara el despacho",
+      "sublabel": "desde una impresión",
+      "width": 149
+    },
+    {
+      "id": "digita",
+      "lane": "facturacion",
+      "col": 4,
+      "type": "security",
+      "label": "Digita la factura",
+      "sublabel": "en otro sistema",
+      "tag": "se teclea dos veces",
+      "width": 136
+    },
+    {
+      "id": "concilia",
+      "lane": "cartera",
+      "col": 5,
+      "type": "security",
+      "label": "Registra el cobro",
+      "sublabel": "y concilia a mano",
+      "tag": "sin rastro",
+      "width": 136
+    }
+  ],
+  "edges": [
+    {
+      "from": "pide",
+      "to": "anota"
+    },
+    {
+      "from": "anota",
+      "to": "cupo",
+      "label": "pregunta por correo"
+    },
+    {
+      "from": "cupo",
+      "to": "prepara"
+    },
+    {
+      "from": "prepara",
+      "to": "digita"
+    },
+    {
+      "from": "digita",
+      "to": "concilia",
+      "label": "el cliente firma en papel"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Dónde se va el tiempo",
+      "items": [
+        "El pedido vive en una hoja que nadie más ve",
+        "El cupo de crédito se pregunta y se espera",
+        "La factura se teclea una segunda vez"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Lo que no queda registrado",
+      "items": [
+        "Nadie sabe en qué punto está un pedido",
+        "El cobro se concilia a mano contra el extracto",
+        "Una corrección obliga a rehacer el camino"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Lo que cuesta",
+      "items": [
+        "El cliente pregunta y hay que reconstruir la respuesta",
+        "Cada área guarda su propia versión del pedido",
+        "El cierre del mes arrastra los errores del mes"
+      ]
+    }
+  ],
+  "mainPath": [
+    "pide",
+    "anota",
+    "cupo",
+    "prepara",
+    "digita",
+    "concilia"
+  ]
+}

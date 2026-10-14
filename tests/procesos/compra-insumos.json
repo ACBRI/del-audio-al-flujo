@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "idioma": "es",
+  "titulo": "Compra de harina y levadura",
+  "objetivo": "Que nunca falte materia prima para la producción del día",
+  "carriles": [
+    { "id": "panadero", "nombre": "Panadero", "externo": false },
+    { "id": "administracion", "nombre": "Administración", "externo": false },
+    { "id": "molino", "nombre": "Molino proveedor", "externo": true }
+  ],
+  "fases": [],
+  "pasos": [
+    {
+      "id": "anota_faltante", "tipo": "inicio", "titulo": "Anota lo que falta",
+      "detalle": "en el cuaderno de la bodega", "carril": "panadero", "fase": null,
+      "herramienta": "cuaderno", "dolor": null,
+      "cita": "El panadero anota en el cuaderno lo que se está acabando."
+    },
+    {
+      "id": "llama_molino", "tipo": "tarea", "titulo": "Llama al molino",
+      "detalle": "con la lista del cuaderno", "carril": "administracion", "fase": null,
+      "herramienta": "teléfono", "dolor": "a veces no contestan",
+      "cita": "La administradora llama al molino con la lista, y a veces no contestan hasta el otro día."
+    },
+    {
+      "id": "entrega", "tipo": "tarea", "titulo": "Entrega los bultos", "detalle": "con la factura",
+      "carril": "molino", "fase": null, "herramienta": null, "dolor": null,
+      "cita": "El molino entrega los bultos con la factura."
+    },
+    {
+      "id": "registra", "tipo": "sistema", "titulo": "Registra la factura", "detalle": null,
+      "carril": "administracion", "fase": null, "herramienta": "programa contable", "dolor": null,
+      "cita": "La administradora registra la factura en el programa contable."
+    },
+    {
+      "id": "guarda", "tipo": "fin", "titulo": "Guarda en bodega", "detalle": "lo más viejo adelante",
+      "carril": "panadero", "fase": null, "herramienta": null, "dolor": null,
+      "cita": "El panadero guarda los bultos poniendo lo más viejo adelante."
+    }
+  ],
+  "conexiones": [
+    { "desde": "anota_faltante", "hacia": "llama_molino", "etiqueta": null },
+    { "desde": "llama_molino", "hacia": "entrega", "etiqueta": "pedido" },
+    { "desde": "entrega", "hacia": "registra", "etiqueta": null },
+    { "desde": "registra", "hacia": "guarda", "etiqueta": null }
+  ],
+  "observaciones": [
+    { "tipo": "tiempo", "texto": "El pedido depende de que el molino conteste el teléfono", "cita": "a veces no contestan hasta el otro día" }
+  ],
+  "preguntas_abiertas": []
+}

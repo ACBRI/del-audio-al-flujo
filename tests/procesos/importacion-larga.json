@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "idioma": "es",
+  "titulo": "Importación de mercancía",
+  "objetivo": "Traer la mercancía a tiempo y saber cuánto costó de verdad",
+  "carriles": [
+    { "id": "compras", "nombre": "Compras", "externo": false },
+    { "id": "proveedor", "nombre": "Proveedor del exterior", "externo": true },
+    { "id": "aduana", "nombre": "Agente de aduana", "externo": true },
+    { "id": "bodega", "nombre": "Bodega", "externo": false },
+    { "id": "contabilidad", "nombre": "Contabilidad", "externo": false }
+  ],
+  "fases": [
+    { "id": "comprar", "nombre": "Comprar" },
+    { "id": "importar", "nombre": "Importar" },
+    { "id": "recibir", "nombre": "Recibir" },
+    { "id": "pagar", "nombre": "Pagar" }
+  ],
+  "pasos": [
+    { "id": "detecta", "tipo": "inicio", "titulo": "Detecta el faltante", "detalle": "en el reporte de ventas", "carril": "compras", "fase": "comprar", "herramienta": "hoja de cálculo", "dolor": null, "cita": "Compras detecta el faltante en el reporte de ventas." },
+    { "id": "cotiza", "tipo": "tarea", "titulo": "Pide cotizaciones", "detalle": "a tres proveedores", "carril": "compras", "fase": "comprar", "herramienta": "correo", "dolor": "responden en días", "cita": "Pedimos cotización a tres proveedores por correo y responden en días." },
+    { "id": "precio_ok", "tipo": "decision", "titulo": "¿El precio sirve?", "detalle": null, "carril": "compras", "fase": "comprar", "herramienta": null, "dolor": null, "cita": "Vemos si el precio sirve." },
+    { "id": "negocia", "tipo": "tarea", "titulo": "Negocia el precio", "detalle": null, "carril": "compras", "fase": "comprar", "herramienta": "correo", "dolor": null, "cita": "Si no sirve, negociamos." },
+    { "id": "orden", "tipo": "sistema", "titulo": "Emite la orden", "detalle": null, "carril": "compras", "fase": "comprar", "herramienta": "ERP", "dolor": null, "cita": "Con el precio acordado, emitimos la orden en el ERP." },
+    { "id": "despacha", "tipo": "tarea", "titulo": "Despacha la carga", "detalle": "con sus documentos", "carril": "proveedor", "fase": "importar", "herramienta": null, "dolor": null, "cita": "El proveedor despacha la carga con sus documentos." },
+    { "id": "docs_ok", "tipo": "decision", "titulo": "¿Documentos completos?", "detalle": null, "carril": "aduana", "fase": "importar", "herramienta": null, "dolor": null, "cita": "El agente de aduana revisa si los documentos están completos." },
+    { "id": "corrige", "tipo": "tarea", "titulo": "Corrige documentos", "detalle": null, "carril": "proveedor", "fase": "importar", "herramienta": "correo", "dolor": "una semana más", "cita": "Si falta algo, el proveedor corrige los documentos y se va una semana más." },
+    { "id": "nacionaliza", "tipo": "tarea", "titulo": "Nacionaliza la carga", "detalle": "y paga los tributos", "carril": "aduana", "fase": "importar", "herramienta": null, "dolor": null, "cita": "El agente nacionaliza la carga y paga los tributos." },
+    { "id": "recibe", "tipo": "tarea", "titulo": "Recibe la carga", "detalle": null, "carril": "bodega", "fase": "recibir", "herramienta": null, "dolor": null, "cita": "Bodega recibe la carga." },
+    { "id": "conforme", "tipo": "decision", "titulo": "¿Llegó conforme?", "detalle": null, "carril": "bodega", "fase": "recibir", "herramienta": null, "dolor": null, "cita": "Revisan si llegó conforme." },
+    { "id": "reclama", "tipo": "tarea", "titulo": "Reclama al proveedor", "detalle": "con fotos", "carril": "compras", "fase": "recibir", "herramienta": "correo", "dolor": null, "cita": "Si llega con daños, Compras reclama al proveedor con fotos." },
+    { "id": "ingresa", "tipo": "sistema", "titulo": "Ingresa al inventario", "detalle": null, "carril": "bodega", "fase": "recibir", "herramienta": "ERP", "dolor": null, "cita": "Bodega ingresa la mercancía al inventario en el ERP." },
+    { "id": "liquida", "tipo": "tarea", "titulo": "Liquida la importación", "detalle": "flete, seguro y tributos", "carril": "contabilidad", "fase": "pagar", "herramienta": "hoja de cálculo", "dolor": "costos a mano", "cita": "Contabilidad liquida la importación en una hoja: flete, seguro y tributos, todo a mano." },
+    { "id": "paga", "tipo": "sistema", "titulo": "Paga al proveedor", "detalle": null, "carril": "contabilidad", "fase": "pagar", "herramienta": "banca en línea", "dolor": null, "cita": "Luego paga al proveedor por la banca en línea." },
+    { "id": "cierra", "tipo": "fin", "titulo": "Cierra el expediente", "detalle": null, "carril": "contabilidad", "fase": "pagar", "herramienta": null, "dolor": null, "cita": "Y cierra el expediente de la importación." }
+  ],
+  "conexiones": [
+    { "desde": "detecta", "hacia": "cotiza", "etiqueta": null },
+    { "desde": "cotiza", "hacia": "precio_ok", "etiqueta": null },
+    { "desde": "precio_ok", "hacia": "orden", "etiqueta": "Sí" },
+    { "desde": "precio_ok", "hacia": "negocia", "etiqueta": "No" },
+    { "desde": "negocia", "hacia": "precio_ok", "etiqueta": "nueva oferta" },
+    { "desde": "orden", "hacia": "despacha", "etiqueta": null },
+    { "desde": "despacha", "hacia": "docs_ok", "etiqueta": null },
+    { "desde": "docs_ok", "hacia": "nacionaliza", "etiqueta": "Sí" },
+    { "desde": "docs_ok", "hacia": "corrige", "etiqueta": "No" },
+    { "desde": "corrige", "hacia": "docs_ok", "etiqueta": null },
+    { "desde": "nacionaliza", "hacia": "recibe", "etiqueta": null },
+    { "desde": "recibe", "hacia": "conforme", "etiqueta": null },
+    { "desde": "conforme", "hacia": "ingresa", "etiqueta": "Sí" },
+    { "desde": "conforme", "hacia": "reclama", "etiqueta": "No" },
+    { "desde": "reclama", "hacia": "ingresa", "etiqueta": "nota crédito" },
+    { "desde": "ingresa", "hacia": "liquida", "etiqueta": null },
+    { "desde": "liquida", "hacia": "paga", "etiqueta": null },
+    { "desde": "paga", "hacia": "cierra", "etiqueta": null }
+  ],
+  "observaciones": [
+    { "tipo": "tiempo", "texto": "Las cotizaciones llegan en días y por correo", "cita": "responden en días" },
+    { "tipo": "tiempo", "texto": "Un documento incompleto demora la carga una semana", "cita": "se va una semana más" },
+    { "tipo": "riesgo", "texto": "El costo real de cada producto se calcula a mano", "cita": "todo a mano" }
+  ],
+  "preguntas_abiertas": [
+    "¿Quién aprueba la orden de compra y desde qué monto?",
+    "¿Cómo se reparte el flete entre los productos?"
+  ]
+}

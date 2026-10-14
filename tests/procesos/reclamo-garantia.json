@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "idioma": "es",
+  "titulo": "Reclamo por garantía",
+  "objetivo": null,
+  "carriles": [
+    { "id": "cliente", "nombre": "Cliente", "externo": true },
+    { "id": "servicio", "nombre": "Servicio al cliente", "externo": false },
+    { "id": "taller", "nombre": "Taller", "externo": false },
+    { "id": "fabrica", "nombre": "Fábrica", "externo": true }
+  ],
+  "fases": [
+    { "id": "recibir", "nombre": "Recibir" },
+    { "id": "revisar", "nombre": "Revisar" },
+    { "id": "resolver", "nombre": "Resolver" }
+  ],
+  "pasos": [
+    {
+      "id": "reporta", "tipo": "inicio", "titulo": "Reporta la falla", "detalle": "con fotos y la factura",
+      "carril": "cliente", "fase": "recibir", "herramienta": "WhatsApp", "dolor": null,
+      "cita": "El cliente reporta la falla por WhatsApp, con fotos y la factura."
+    },
+    {
+      "id": "en_garantia", "tipo": "decision", "titulo": "¿Está en garantía?", "detalle": null,
+      "carril": "servicio", "fase": "recibir", "herramienta": "carpeta de facturas", "dolor": "buscar la factura",
+      "cita": "En servicio miramos si está en garantía, y buscar la factura en la carpeta toma tiempo."
+    },
+    {
+      "id": "pide_fotos", "tipo": "tarea", "titulo": "Pide más fotos", "detalle": "si no se ve la falla",
+      "carril": "servicio", "fase": "recibir", "herramienta": "WhatsApp", "dolor": null,
+      "cita": "Si con las fotos no se ve la falla, pedimos más."
+    },
+    {
+      "id": "cotiza", "tipo": "tarea", "titulo": "Cotiza la reparación", "detalle": null,
+      "carril": "servicio", "fase": "revisar", "herramienta": "hoja de cálculo", "dolor": null,
+      "cita": "Si no está en garantía, cotizamos la reparación."
+    },
+    {
+      "id": "diagnostica", "tipo": "tarea", "titulo": "Diagnostica el equipo", "detalle": "con el equipo en la mesa",
+      "carril": "taller", "fase": "revisar", "herramienta": null, "dolor": "espera hasta tres días",
+      "cita": "El taller diagnostica el equipo, y eso puede esperar hasta tres días."
+    },
+    {
+      "id": "pide_repuesto", "tipo": "tarea", "titulo": "Pide el repuesto", "detalle": "a la fábrica",
+      "carril": "taller", "fase": "resolver", "herramienta": "correo", "dolor": null,
+      "cita": "Si hace falta repuesto, se le pide a la fábrica por correo."
+    },
+    {
+      "id": "envia_repuesto", "tipo": "tarea", "titulo": "Envía el repuesto", "detalle": null,
+      "carril": "fabrica", "fase": "resolver", "herramienta": null, "dolor": "tarda una semana",
+      "cita": "La fábrica lo envía, y eso tarda una semana."
+    },
+    {
+      "id": "repara", "tipo": "tarea", "titulo": "Repara y prueba", "detalle": null,
+      "carril": "taller", "fase": "resolver", "herramienta": null, "dolor": null,
+      "cita": "El taller repara y prueba el equipo."
+    },
+    {
+      "id": "retira", "tipo": "fin", "titulo": "Retira el equipo", "detalle": null,
+      "carril": "cliente", "fase": "resolver", "herramienta": null, "dolor": null,
+      "cita": "El cliente retira el equipo en el almacén."
+    }
+  ],
+  "conexiones": [
+    { "desde": "reporta", "hacia": "en_garantia", "etiqueta": null },
+    { "desde": "en_garantia", "hacia": "diagnostica", "etiqueta": "Sí" },
+    { "desde": "en_garantia", "hacia": "cotiza", "etiqueta": "No" },
+    { "desde": "en_garantia", "hacia": "pide_fotos", "etiqueta": "No se sabe" },
+    { "desde": "pide_fotos", "hacia": "reporta", "etiqueta": "envía más fotos" },
+    { "desde": "cotiza", "hacia": "diagnostica", "etiqueta": "acepta" },
+    { "desde": "diagnostica", "hacia": "pide_repuesto", "etiqueta": null },
+    { "desde": "pide_repuesto", "hacia": "envia_repuesto", "etiqueta": null },
+    { "desde": "envia_repuesto", "hacia": "repara", "etiqueta": null },
+    { "desde": "repara", "hacia": "retira", "etiqueta": null }
+  ],
+  "observaciones": [
+    { "tipo": "tiempo", "texto": "Buscar la factura en la carpeta retrasa la respuesta", "cita": "buscar la factura en la carpeta toma tiempo" },
+    { "tipo": "riesgo", "texto": "El cliente no sabe en qué va su equipo mientras espera el diagnóstico", "cita": null }
+  ],
+  "preguntas_abiertas": ["¿Qué pasa si el cliente no acepta la cotización?"]
+}

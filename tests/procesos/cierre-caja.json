@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "idioma": "es",
+  "titulo": "Cierre de caja",
+  "objetivo": null,
+  "carriles": [
+    { "id": "cajera", "nombre": "Cajera", "externo": false },
+    { "id": "administradora", "nombre": "Administradora", "externo": false }
+  ],
+  "fases": [
+    { "id": "contar", "nombre": "Contar" },
+    { "id": "registrar", "nombre": "Registrar" },
+    { "id": "depositar", "nombre": "Depositar" }
+  ],
+  "pasos": [
+    { "id": "cuenta_billetes", "tipo": "inicio", "titulo": "Cuenta los billetes", "detalle": null, "carril": "cajera", "fase": "contar", "herramienta": null, "dolor": null, "cita": "Al cerrar, la cajera cuenta los billetes." },
+    { "id": "cuenta_monedas", "tipo": "tarea", "titulo": "Cuenta las monedas", "detalle": null, "carril": "cajera", "fase": "contar", "herramienta": null, "dolor": null, "cita": "Después cuenta las monedas." },
+    { "id": "imprime", "tipo": "sistema", "titulo": "Imprime el reporte", "detalle": "de ventas del día", "carril": "cajera", "fase": "contar", "herramienta": "caja registradora", "dolor": null, "cita": "Imprime el reporte de ventas del día en la caja." },
+    { "id": "suma_vouchers", "tipo": "tarea", "titulo": "Suma los vouchers", "detalle": null, "carril": "cajera", "fase": "contar", "herramienta": "calculadora", "dolor": "se suma a mano", "cita": "Suma los vouchers de tarjeta con la calculadora, a mano." },
+    { "id": "cuadra", "tipo": "decision", "titulo": "¿Cuadra con el reporte?", "detalle": null, "carril": "cajera", "fase": "contar", "herramienta": null, "dolor": null, "cita": "Mira si cuadra con el reporte." },
+    { "id": "recuenta", "tipo": "tarea", "titulo": "Vuelve a contar", "detalle": null, "carril": "cajera", "fase": "contar", "herramienta": null, "dolor": "media hora más", "cita": "Si no cuadra, vuelve a contar todo, y se va media hora más." },
+    { "id": "llena_planilla", "tipo": "tarea", "titulo": "Llena la planilla", "detalle": null, "carril": "cajera", "fase": "registrar", "herramienta": "planilla de papel", "dolor": null, "cita": "Llena la planilla de cierre en papel." },
+    { "id": "firma", "tipo": "tarea", "titulo": "Firma la planilla", "detalle": null, "carril": "cajera", "fase": "registrar", "herramienta": null, "dolor": null, "cita": "La firma." },
+    { "id": "ensobra", "tipo": "tarea", "titulo": "Guarda el efectivo", "detalle": "en un sobre", "carril": "cajera", "fase": "registrar", "herramienta": null, "dolor": null, "cita": "Guarda el efectivo en un sobre." },
+    { "id": "entrega", "tipo": "tarea", "titulo": "Entrega el sobre", "detalle": "con la planilla", "carril": "cajera", "fase": "registrar", "herramienta": null, "dolor": null, "cita": "Le entrega el sobre con la planilla a la administradora." },
+    { "id": "revisa", "tipo": "tarea", "titulo": "Revisa la planilla", "detalle": null, "carril": "administradora", "fase": "depositar", "herramienta": null, "dolor": null, "cita": "La administradora revisa la planilla." },
+    { "id": "deposita", "tipo": "tarea", "titulo": "Deposita en el banco", "detalle": null, "carril": "administradora", "fase": "depositar", "herramienta": null, "dolor": "hace fila", "cita": "Al otro día deposita en el banco, donde hace fila." },
+    { "id": "archiva", "tipo": "fin", "titulo": "Archiva la planilla", "detalle": "con el comprobante", "carril": "administradora", "fase": "depositar", "herramienta": "archivador", "dolor": null, "cita": "Archiva la planilla con el comprobante." }
+  ],
+  "conexiones": [
+    { "desde": "cuenta_billetes", "hacia": "cuenta_monedas", "etiqueta": null },
+    { "desde": "cuenta_monedas", "hacia": "imprime", "etiqueta": null },
+    { "desde": "imprime", "hacia": "suma_vouchers", "etiqueta": null },
+    { "desde": "suma_vouchers", "hacia": "cuadra", "etiqueta": null },
+    { "desde": "cuadra", "hacia": "llena_planilla", "etiqueta": "Sí" },
+    { "desde": "cuadra", "hacia": "recuenta", "etiqueta": "No" },
+    { "desde": "recuenta", "hacia": "cuadra", "etiqueta": null },
+    { "desde": "llena_planilla", "hacia": "firma", "etiqueta": null },
+    { "desde": "firma", "hacia": "ensobra", "etiqueta": null },
+    { "desde": "ensobra", "hacia": "entrega", "etiqueta": null },
+    { "desde": "entrega", "hacia": "revisa", "etiqueta": null },
+    { "desde": "revisa", "hacia": "deposita", "etiqueta": null },
+    { "desde": "deposita", "hacia": "archiva", "etiqueta": null }
+  ],
+  "observaciones": [
+    { "tipo": "tiempo", "texto": "Cuando no cuadra, el recuento toma media hora más", "cita": "se va media hora más" },
+    { "tipo": "riesgo", "texto": "El efectivo pasa la noche en un sobre antes de llegar al banco", "cita": null }
+  ],
+  "preguntas_abiertas": ["¿Dónde se guarda el sobre durante la noche?"]
+}

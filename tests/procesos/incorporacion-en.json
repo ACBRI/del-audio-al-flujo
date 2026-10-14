@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "idioma": "en",
+  "titulo": "New client onboarding",
+  "objetivo": "Start the monthly books with every document in hand",
+  "carriles": [
+    { "id": "client", "nombre": "Client", "externo": true },
+    { "id": "sales", "nombre": "Sales", "externo": false },
+    { "id": "bookkeeping", "nombre": "Bookkeeping", "externo": false }
+  ],
+  "fases": [
+    { "id": "sign", "nombre": "Sign up" },
+    { "id": "setup", "nombre": "Set up" }
+  ],
+  "pasos": [
+    { "id": "signs", "tipo": "inicio", "titulo": "Signs the proposal", "detalle": "by email", "carril": "client", "fase": "sign", "herramienta": "email", "dolor": null, "cita": "The client signs the proposal and sends it back by email." },
+    { "id": "requests", "tipo": "tarea", "titulo": "Requests documents", "detalle": "with a checklist", "carril": "sales", "fase": "sign", "herramienta": "email", "dolor": "back-and-forth", "cita": "Sales requests the documents with a checklist, and there is a lot of back-and-forth." },
+    { "id": "complete", "tipo": "decision", "titulo": "Documents complete?", "detalle": null, "carril": "bookkeeping", "fase": "setup", "herramienta": null, "dolor": null, "cita": "Bookkeeping checks whether the documents are complete." },
+    { "id": "chases", "tipo": "tarea", "titulo": "Chases what is missing", "detalle": null, "carril": "sales", "fase": "setup", "herramienta": "phone", "dolor": null, "cita": "If something is missing, sales chases it by phone." },
+    { "id": "creates", "tipo": "sistema", "titulo": "Creates the company file", "detalle": null, "carril": "bookkeeping", "fase": "setup", "herramienta": "accounting software", "dolor": null, "cita": "Then bookkeeping creates the company file in the accounting software." },
+    { "id": "welcome", "tipo": "fin", "titulo": "Gets the welcome call", "detalle": null, "carril": "client", "fase": "setup", "herramienta": "video call", "dolor": null, "cita": "The client gets a welcome call." }
+  ],
+  "conexiones": [
+    { "desde": "signs", "hacia": "requests", "etiqueta": null },
+    { "desde": "requests", "hacia": "complete", "etiqueta": null },
+    { "desde": "complete", "hacia": "creates", "etiqueta": "Yes" },
+    { "desde": "complete", "hacia": "chases", "etiqueta": "No" },
+    { "desde": "chases", "hacia": "complete", "etiqueta": "sends more" },
+    { "desde": "creates", "hacia": "welcome", "etiqueta": null }
+  ],
+  "observaciones": [
+    { "tipo": "tiempo", "texto": "Documents arrive in pieces over several emails", "cita": "there is a lot of back-and-forth" }
+  ],
+  "preguntas_abiertas": ["Who decides when a missing document can wait?"]
+}

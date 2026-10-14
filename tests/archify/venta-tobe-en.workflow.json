@@ -1,0 +1,201 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Order to cash · how it works in Odoo",
+    "quality_profile": "showcase",
+    "legend": {
+      "mode": "all",
+      "entries": {
+        "frontend": {
+          "label": "Customer portal"
+        },
+        "backend": {
+          "label": "Inside Odoo"
+        },
+        "security": {
+          "label": "Control, on the record"
+        },
+        "external": {
+          "label": "Supplier or customer"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "cliente",
+      "label": "Customer"
+    },
+    {
+      "id": "ventas",
+      "label": "Sales"
+    },
+    {
+      "id": "inventario",
+      "label": "Inventory"
+    },
+    {
+      "id": "contabilidad",
+      "label": "Accounting"
+    }
+  ],
+  "phases": [
+    {
+      "id": "pedir",
+      "label": "Order",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "entregar",
+      "label": "Deliver",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "cobrar",
+      "label": "Collect",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "portal",
+      "lane": "cliente",
+      "col": 0,
+      "type": "frontend",
+      "label": "Orders on the portal",
+      "sublabel": "or through sales",
+      "tag": "Portal",
+      "width": 156
+    },
+    {
+      "id": "pedido",
+      "lane": "ventas",
+      "col": 1,
+      "type": "backend",
+      "label": "Quotation and order",
+      "sublabel": "confirmed in Odoo",
+      "tag": "Sales",
+      "width": 149
+    },
+    {
+      "id": "aprueba",
+      "lane": "contabilidad",
+      "col": 2,
+      "type": "security",
+      "label": "Approves the limit",
+      "sublabel": "or adjusts it",
+      "tag": "only when exceeded",
+      "width": 142
+    },
+    {
+      "id": "entrega",
+      "lane": "inventario",
+      "col": 2,
+      "type": "backend",
+      "label": "Delivery with a",
+      "sublabel": "packing list",
+      "tag": "Inventory",
+      "width": 122
+    },
+    {
+      "id": "factura",
+      "lane": "contabilidad",
+      "col": 3,
+      "type": "backend",
+      "label": "E-invoice raised",
+      "sublabel": "from the delivery",
+      "tag": "Accounting",
+      "width": 129
+    },
+    {
+      "id": "recibe",
+      "lane": "cliente",
+      "col": 4,
+      "type": "frontend",
+      "label": "Gets the invoice",
+      "sublabel": "and the statement",
+      "tag": "Portal",
+      "width": 129
+    },
+    {
+      "id": "cobro",
+      "lane": "contabilidad",
+      "col": 5,
+      "type": "backend",
+      "label": "Payment matched",
+      "sublabel": "to the bank statement",
+      "tag": "Accounting",
+      "width": 122
+    }
+  ],
+  "edges": [
+    {
+      "from": "portal",
+      "to": "pedido"
+    },
+    {
+      "from": "pedido",
+      "to": "entrega"
+    },
+    {
+      "from": "pedido",
+      "to": "aprueba",
+      "label": "if it exceeds the limit"
+    },
+    {
+      "from": "entrega",
+      "to": "factura"
+    },
+    {
+      "from": "factura",
+      "to": "recibe"
+    },
+    {
+      "from": "recibe",
+      "to": "cobro"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One single path",
+      "items": [
+        "The order is created once and never retyped",
+        "The credit limit is checked only when it matters",
+        "The invoice comes from the delivery, not a copy"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "What the customer sees",
+      "items": [
+        "Their order, invoice and statement on the portal",
+        "The same information the person serving them sees",
+        "Without asking for it by email"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "What gets recorded",
+      "items": [
+        "Who approved the limit, and when",
+        "The electronic document with its acknowledgement",
+        "Payment matched against the bank statement"
+      ]
+    }
+  ],
+  "mainPath": [
+    "portal",
+    "pedido",
+    "entrega",
+    "factura",
+    "recibe",
+    "cobro"
+  ]
+}
