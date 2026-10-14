@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "idioma": "es",
+  "titulo": "Del pedido al despacho",
+  "objetivo": null,
+  "carriles": [
+    { "id": "cliente", "nombre": "Cliente", "externo": true },
+    { "id": "ventas", "nombre": "Ventas", "externo": false },
+    { "id": "cartera", "nombre": "Cartera", "externo": false },
+    { "id": "bodega", "nombre": "Bodega", "externo": false }
+  ],
+  "fases": [
+    { "id": "pedir", "nombre": "Pedir" },
+    { "id": "aprobar", "nombre": "Aprobar el crédito" },
+    { "id": "despachar", "nombre": "Despachar" }
+  ],
+  "pasos": [
+    {
+      "id": "envia_pedido",
+      "tipo": "inicio",
+      "titulo": "Envía el pedido",
+      "detalle": "lista con cantidades",
+      "carril": "cliente",
+      "fase": "pedir",
+      "herramienta": "WhatsApp",
+      "dolor": null,
+      "cita": "El cliente nos escribe por WhatsApp con lo que necesita, casi siempre una lista con cantidades."
+    },
+    {
+      "id": "copia_pedido",
+      "tipo": "tarea",
+      "titulo": "Copia el pedido",
+      "detalle": "producto por producto",
+      "carril": "ventas",
+      "fase": "pedir",
+      "herramienta": "hoja de cálculo",
+      "dolor": "se digita dos veces",
+      "cita": "La vendedora copia el pedido a una hoja de cálculo, producto por producto, o sea que se digita dos veces."
+    },
+    {
+      "id": "pide_revision",
+      "tipo": "tarea",
+      "titulo": "Pide revisar el crédito",
+      "detalle": "a Cartera, por correo",
+      "carril": "ventas",
+      "fase": "aprobar",
+      "herramienta": "correo",
+      "dolor": "espera hasta medio día",
+      "cita": "Después le escribe por correo a Cartera para que revise el crédito, y ahí el pedido espera; a veces la respuesta llega hasta medio día después."
+    },
+    {
+      "id": "tiene_cupo",
+      "tipo": "decision",
+      "titulo": "¿Tiene cupo y está al día?",
+      "detalle": null,
+      "carril": "cartera",
+      "fase": "aprobar",
+      "herramienta": null,
+      "dolor": null,
+      "cita": "En Cartera miran si el cliente tiene cupo y si está al día."
+    },
+    {
+      "id": "retiene",
+      "tipo": "tarea",
+      "titulo": "Retiene el pedido",
+      "detalle": "y llama para pedir un abono",
+      "carril": "cartera",
+      "fase": "aprobar",
+      "herramienta": "teléfono",
+      "dolor": null,
+      "cita": "Si debe facturas vencidas, retienen el pedido y lo llaman para pedirle un abono."
+    },
+    {
+      "id": "paga_vencido",
+      "tipo": "tarea",
+      "titulo": "Paga lo vencido",
+      "detalle": "por transferencia",
+      "carril": "cliente",
+      "fase": "aprobar",
+      "herramienta": null,
+      "dolor": null,
+      "cita": "Cuando el cliente paga lo vencido por transferencia, Cartera vuelve a revisar."
+    },
+    {
+      "id": "arma_pedido",
+      "tipo": "tarea",
+      "titulo": "Arma el pedido",
+      "detalle": "con la hoja impresa",
+      "carril": "bodega",
+      "fase": "despachar",
+      "herramienta": "papel",
+      "dolor": "faltantes al final",
+      "cita": "En bodega arman el pedido con la hoja impresa, y muchas veces los faltantes se descubren al final, cuando el cliente ya está esperando."
+    },
+    {
+      "id": "emite_factura",
+      "tipo": "sistema",
+      "titulo": "Emite la factura",
+      "detalle": null,
+      "carril": "ventas",
+      "fase": "despachar",
+      "herramienta": "sistema contable",
+      "dolor": null,
+      "cita": "Con el pedido armado, la vendedora emite la factura en el sistema contable."
+    },
+    {
+      "id": "despacha",
+      "tipo": "tarea",
+      "titulo": "Despacha el pedido",
+      "detalle": "con el transportista",
+      "carril": "bodega",
+      "fase": "despachar",
+      "herramienta": "guía",
+      "dolor": null,
+      "cita": "Luego bodega despacha con el transportista y una guía."
+    },
+    {
+      "id": "recibe",
+      "tipo": "fin",
+      "titulo": "Recibe y firma la guía",
+      "detalle": null,
+      "carril": "cliente",
+      "fase": "despachar",
+      "herramienta": "papel",
+      "dolor": null,
+      "cita": "El cliente recibe y firma la guía de entrega, y esa guía vuelve a la oficina en papel"
+    }
+  ],
+  "conexiones": [
+    { "desde": "envia_pedido", "hacia": "copia_pedido", "etiqueta": null },
+    { "desde": "copia_pedido", "hacia": "pide_revision", "etiqueta": null },
+    { "desde": "pide_revision", "hacia": "tiene_cupo", "etiqueta": null },
+    { "desde": "tiene_cupo", "hacia": "arma_pedido", "etiqueta": "Sí" },
+    { "desde": "tiene_cupo", "hacia": "retiene", "etiqueta": "No" },
+    { "desde": "retiene", "hacia": "paga_vencido", "etiqueta": null },
+    { "desde": "paga_vencido", "hacia": "tiene_cupo", "etiqueta": "vuelve a revisar" },
+    { "desde": "arma_pedido", "hacia": "emite_factura", "etiqueta": null },
+    { "desde": "emite_factura", "hacia": "despacha", "etiqueta": null },
+    { "desde": "despacha", "hacia": "recibe", "etiqueta": null }
+  ],
+  "observaciones": [
+    {
+      "tipo": "tiempo",
+      "texto": "El pedido se escribe dos veces: en WhatsApp y en la hoja de cálculo",
+      "cita": "La vendedora copia el pedido a una hoja de cálculo, producto por producto, o sea que se digita dos veces."
+    },
+    {
+      "tipo": "tiempo",
+      "texto": "La respuesta de Cartera puede tardar hasta medio día",
+      "cita": "a veces la respuesta llega hasta medio día después"
+    },
+    {
+      "tipo": "riesgo",
+      "texto": "Los faltantes aparecen cuando el cliente ya está esperando",
+      "cita": "muchas veces los faltantes se descubren al final, cuando el cliente ya está esperando"
+    },
+    {
+      "tipo": "riesgo",
+      "texto": "Nadie sabe a tiempo si el pedido llegó completo",
+      "cita": "esa guía vuelve a la oficina en papel, así que nadie sabe a tiempo si el pedido llegó completo"
+    }
+  ],
+  "preguntas_abiertas": [
+    "¿Quién decide si se despacha un pedido incompleto cuando hay faltantes?",
+    "¿Cuánto tiempo pasa entre el despacho y la entrega al cliente?"
+  ]
+}
