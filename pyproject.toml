@@ -1,0 +1,23 @@
+[project]
+name = "del-audio-al-flujo"
+version = "1.0.0"
+description = "Del relato de un proceso de empresa a su flujo dibujado por carriles."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Andrés Briñez" }]
+requires-python = ">=3.9"
+# Para dibujar no hace falta instalar nada: solo la biblioteca estándar de Python y Node 18+.
+dependencies = []
+
+[project.optional-dependencies]
+# Opción B: transcribir el audio en el propio computador.
+transcribir = ["faster-whisper>=1.0"]
+# Para correr las pruebas.
+pruebas = ["pytest>=7", "jsonschema>=4.18"]
+
+[project.urls]
+Repositorio = "https://github.com/ACBRI/del-audio-al-flujo"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

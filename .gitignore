@@ -1,0 +1,18 @@
+# Los procesos de cada persona se quedan en su computador.
+mis-flujos/
+
+# Lo que dibujar.py escribe junto al ejemplo.
+ejemplos/**/flujo*.html
+ejemplos/**/flujo*.archify.json
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Sistemas
+.DS_Store
+Thumbs.db
+desktop.ini
